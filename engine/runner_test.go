@@ -26,11 +26,10 @@ func buildExecutionContext(trace string) context.Context {
 	)
 	baseContext = util.WithRuntimeFlags(baseContext, runtimeFlags)
 
-	executionContext := log.WithLogger(
+	return log.WithLogger(
 		baseContext,
 		logrus.WithFields(logrus.Fields{"executionId": executionId}),
 	)
-	return executionContext
 }
 
 func BenchmarkRunWithTrace(b *testing.B) {
