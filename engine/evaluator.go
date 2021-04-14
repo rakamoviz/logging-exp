@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/rakamoviz/logging-exp/log"
+	"github.com/rakamoviz/logging-exp/util"
 )
 
 type Evaluator struct {
@@ -11,7 +12,9 @@ type Evaluator struct {
 }
 
 func (e *Evaluator) Evaluate(ctx context.Context, rule string) bool {
-	defer log.Trace(ctx, log.Entry(ctx, "engine.(*Evaluator).Evaluate", &map[string]interface{}{"rule": rule}))
+	if util.GetRuntimeFlags(ctx).Trace() {
+		defer log.Trace(ctx, log.Entry(ctx, "engine.(*Evaluator).Evaluate", &map[string]interface{}{"rule": rule}))
+	}
 
 	log.G(ctx).Info("Logging in Evaluate")
 

@@ -1,7 +1,6 @@
 package util
 
 import (
-	"fmt"
 	"regexp"
 	"runtime"
 )
@@ -16,8 +15,6 @@ func GetFunctionName() string {
 	n := runtime.Callers(2, pc)
 	frames := runtime.CallersFrames(pc[:n])
 	frame, _ := frames.Next()
-
-	fmt.Println(frame.Function)
 
 	return extractFnName.ReplaceAllString(frame.Function, "$1")
 }

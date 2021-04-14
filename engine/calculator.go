@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/rakamoviz/logging-exp/log"
+	"github.com/rakamoviz/logging-exp/util"
 )
 
 type Calculator struct {
@@ -11,7 +12,9 @@ type Calculator struct {
 }
 
 func (c *Calculator) Calculate(ctx context.Context, amount int) int {
-	defer log.Trace(ctx, log.Entry(ctx, "engine.(*Calculator).Calculate", &map[string]interface{}{"amount": amount}))
+	if util.GetRuntimeFlags(ctx).Trace() {
+		defer log.Trace(ctx, log.Entry(ctx, "engine.(*Calculator).Calculate", &map[string]interface{}{"amount": amount}))
+	}
 
 	log.G(ctx).Info("Logging in Calculate")
 	return c.offset + amount
