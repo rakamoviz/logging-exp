@@ -2,6 +2,7 @@ package engine
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"testing"
 
@@ -9,11 +10,14 @@ import (
 	"github.com/rakamoviz/logging-exp/log"
 	"github.com/rakamoviz/logging-exp/util"
 	"github.com/sirupsen/logrus"
+
+	"github.com/sirupsen/logrus/hooks/test"
+	//"github.com/stretchr/testify/assert"
 )
 
-func buildExecutionContext(runtimeConfig map[string]string) context.Context {
-	logrus.SetFormatter(&logrus.JSONFormatter{})
-	logrus.SetOutput(os.Stdout)
+func buildExecutionContext(runtimeConfig map[string]string, logger *logrus.Logger) context.Context {
+	logger.SetFormatter(&logrus.JSONFormatter{})
+	logger.SetOutput(os.Stdout)
 
 	executionId := uuid.New()
 	runtimeFlags := util.NewRuntimeFlags(runtimeConfig)
@@ -26,14 +30,14 @@ func buildExecutionContext(runtimeConfig map[string]string) context.Context {
 
 	return log.WithLogger(
 		baseContext,
-		logrus.WithFields(logrus.Fields{"executionId": executionId}),
+		logger.WithFields(logrus.Fields{"executionId": executionId}),
 	)
 }
 
 func BenchmarkRunWithTrace(b *testing.B) {
 	executionContext := buildExecutionContext(map[string]string{
 		"trace": "true",
-	})
+	}, logrus.New())
 
 	calculator := NewCalculator(4)
 	evaluator := NewEvaluator(calculator)
@@ -48,7 +52,7 @@ func BenchmarkRunWithTrace(b *testing.B) {
 func BenchmarkRunWithoutTrace(b *testing.B) {
 	executionContext := buildExecutionContext(map[string]string{
 		"trace": "false",
-	})
+	}, logrus.New())
 
 	calculator := NewCalculator(4)
 	evaluator := NewEvaluator(calculator)
@@ -61,5 +65,17 @@ func BenchmarkRunWithoutTrace(b *testing.B) {
 }
 
 func TestRun(t *testing.T) {
+	logger, hook := test.NewNullLogger()
 
+	executionContext := buildExecutionContext(map[string]string{
+		"trace": "true",
+	}, logger)
+
+	calculator := NewCalculator(4)
+	evaluator := NewEvaluator(calculator)
+	runner := NewRunner(evaluator)
+
+	runner.Run(executionContext)
+
+	fmt.Println("hey", len(hook.Entries))
 }
