@@ -12,8 +12,10 @@ import (
 )
 
 func main() {
-	logrus.SetFormatter(&logrus.JSONFormatter{})
-	logrus.SetOutput(os.Stdout)
+	logger := logrus.New()
+
+	logger.SetFormatter(&logrus.JSONFormatter{})
+	logger.SetOutput(os.Stdout)
 
 	executionId := uuid.New()
 	runtimeFlags := util.NewRuntimeFlags(map[string]string{
@@ -28,7 +30,7 @@ func main() {
 
 	executionContext := log.WithLogger(
 		baseContext,
-		logrus.WithFields(logrus.Fields{"executionId": executionId}),
+		logger.WithFields(logrus.Fields{"executionId": executionId}),
 	)
 
 	calculator := engine.NewCalculator(4)
