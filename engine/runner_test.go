@@ -11,7 +11,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func buildExecutionContext(trace string) *context.Context {
+func buildExecutionContext(trace string) context.Context {
 	logrus.SetFormatter(&logrus.JSONFormatter{})
 	logrus.SetOutput(os.Stdout)
 
@@ -30,11 +30,11 @@ func buildExecutionContext(trace string) *context.Context {
 		baseContext,
 		logrus.WithFields(logrus.Fields{"executionId": executionId}),
 	)
-	return &executionContext
+	return executionContext
 }
 
 func BenchmarkRunWithTrace(b *testing.B) {
-	executionContext := *buildExecutionContext("true")
+	executionContext := buildExecutionContext("true")
 
 	calculator := NewCalculator(4)
 	evaluator := NewEvaluator(calculator)
@@ -47,7 +47,7 @@ func BenchmarkRunWithTrace(b *testing.B) {
 }
 
 func BenchmarkRunWithoutTrace(b *testing.B) {
-	executionContext := *buildExecutionContext("false")
+	executionContext := buildExecutionContext("false")
 
 	calculator := NewCalculator(4)
 	evaluator := NewEvaluator(calculator)
