@@ -11,13 +11,13 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func BenchmarkRunWithTrace(b *testing.B) {
+func buildExecutionContext(trace string) *context.Context {
 	logrus.SetFormatter(&logrus.JSONFormatter{})
 	logrus.SetOutput(os.Stdout)
 
 	executionId := uuid.New()
 	runtimeFlags := util.NewRuntimeFlags(map[string]string{
-		"trace": "true",
+		"trace": trace,
 	})
 
 	baseContext := context.Background()
@@ -30,6 +30,11 @@ func BenchmarkRunWithTrace(b *testing.B) {
 		baseContext,
 		logrus.WithFields(logrus.Fields{"executionId": executionId}),
 	)
+	return &executionContext
+}
+
+func BenchmarkRunWithTrace(b *testing.B) {
+	executionContext := *buildExecutionContext("true")
 
 	calculator := NewCalculator(4)
 	evaluator := NewEvaluator(calculator)
@@ -42,24 +47,7 @@ func BenchmarkRunWithTrace(b *testing.B) {
 }
 
 func BenchmarkRunWithoutTrace(b *testing.B) {
-	logrus.SetFormatter(&logrus.JSONFormatter{})
-	logrus.SetOutput(os.Stdout)
-
-	executionId := uuid.New()
-	runtimeFlags := util.NewRuntimeFlags(map[string]string{
-		"trace": "false",
-	})
-
-	baseContext := context.Background()
-	baseContext = context.WithValue(
-		baseContext, util.ExecutionIdKey{}, executionId,
-	)
-	baseContext = util.WithRuntimeFlags(baseContext, runtimeFlags)
-
-	executionContext := log.WithLogger(
-		baseContext,
-		logrus.WithFields(logrus.Fields{"executionId": executionId}),
-	)
+	executionContext := *buildExecutionContext("false")
 
 	calculator := NewCalculator(4)
 	evaluator := NewEvaluator(calculator)
@@ -69,4 +57,8 @@ func BenchmarkRunWithoutTrace(b *testing.B) {
 	for n := 0; n < b.N; n++ {
 		runner.Run(executionContext)
 	}
+}
+
+func TestRun(t *testing.T) {
+
 }
