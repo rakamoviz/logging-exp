@@ -77,5 +77,5 @@ func TestRun(t *testing.T) {
 
 	runner.Run(executionContext)
 
-	fmt.Println("hey", len(hook.Entries))
+	fmt.Println("==============> MYLOG", len(hook.Entries), hook.Entries[0].Data)
 }
