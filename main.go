@@ -8,9 +8,12 @@ import (
 	"github.com/rakamoviz/logging-exp/engine"
 	"github.com/rakamoviz/logging-exp/util/contextkeys"
 	"github.com/rakamoviz/logging-exp/util/log"
-	"github.com/rakamoviz/logging-exp/util/runtimeflags"
 	"github.com/sirupsen/logrus"
 )
+
+func shouldLog() bool {
+	return true
+}
 
 func main() {
 	logger := logrus.New()
@@ -19,19 +22,16 @@ func main() {
 	logger.SetOutput(os.Stdout)
 
 	executionId := uuid.New()
-	runtimeFlags := runtimeflags.New(map[string]string{
-		"trace": "true",
-	})
 
 	baseContext := context.Background()
 	baseContext = context.WithValue(
 		baseContext, contextkeys.ExecutionId{}, executionId,
 	)
-	baseContext = runtimeflags.BuildContext(baseContext, runtimeFlags)
 
 	executionContext := log.BuildContext(
 		baseContext,
 		logger.WithFields(logrus.Fields{"executionId": executionId}),
+		shouldLog(),
 	)
 
 	calculator := engine.NewCalculator(4)

@@ -19,22 +19,12 @@ package log
 import (
 	"context"
 
+	"github.com/rakamoviz/logging-exp/util/contextkeys"
 	"github.com/sirupsen/logrus"
 )
 
 var (
-	// G is an alias for GetLogger.
-	//
-	// We may want to define this locally to a package to get package tagged log
-	// messages.
-	G = Get
-
-	// L is an alias for the standard logger.
-	L = logrus.NewEntry(logrus.StandardLogger())
-)
-
-type (
-	loggerKey struct{}
+	std = logrus.NewEntry(logrus.StandardLogger())
 )
 
 const (
@@ -51,35 +41,110 @@ const (
 
 // WithLogger returns a new context with the provided logger. Use in
 // combination with logger.WithField(s) for great effect.
-func BuildContext(ctx context.Context, logger *logrus.Entry) context.Context {
-	return context.WithValue(ctx, loggerKey{}, logger)
+func BuildContext(ctx context.Context, logger *logrus.Entry, sampleLog bool) context.Context {
+	return context.WithValue(
+		context.WithValue(ctx, contextkeys.Logger{}, logger),
+		contextkeys.SampleLog{}, sampleLog,
+	)
 }
 
 // GetLogger retrieves the current logger from the context. If no logger is
 // available, the default logger is returned.
 func Get(ctx context.Context) *logrus.Entry {
-	logger := ctx.Value(loggerKey{})
+	logger := ctx.Value(contextkeys.Logger{})
 
 	if logger == nil {
-		return L
+		return std
 	}
 
 	return logger.(*logrus.Entry)
 }
 
-func FnEntrance(ctx context.Context, functionName string, args *map[string]interface{}) string {
-	G(ctx).WithFields(logrus.Fields{
-		"fnEntrance": 1,
-		"fnName":     functionName,
-		"fnArgs":     args,
-	}).Info()
+func LogFn(ctx context.Context, functionName string, args *map[string]interface{}) func(...bool) string {
+	return func(forceLogs ...bool) string {
+		logger := Get(ctx).WithFields(logrus.Fields{
+			"fnExit": 1,
+			"fnName": functionName,
+		})
 
-	return functionName
+		log(ctx, logger, forceLog(forceLogs...), logrus.InfoLevel, nil)
+
+		return functionName
+	}
 }
 
-func FnExit(ctx context.Context, functionName string) {
-	G(ctx).WithFields(logrus.Fields{
-		"fnExit": 1,
-		"fnName": functionName,
-	}).Info()
+func Fn(ctx context.Context, functionName string, args *map[string]interface{}) func(...bool) (context.Context, string, *map[string]interface{}) {
+	return func(forceLogs ...bool) (context.Context, string, *map[string]interface{}) {
+		logger := Get(ctx).WithFields(logrus.Fields{
+			"fnEntrance": 1,
+			"fnName":     functionName,
+			"fnArgs":     args,
+		})
+
+		log(ctx, logger, forceLog(forceLogs...), logrus.InfoLevel, nil)
+
+		return ctx, functionName, args
+	}
+}
+
+func log(ctx context.Context, logger *logrus.Entry, forceLog bool, level logrus.Level, args ...interface{}) {
+	sampleLog, _ := ctx.Value(contextkeys.SampleLog{}).(bool)
+
+	if sampleLog || forceLog {
+		logger.Log(level, args...)
+	}
+}
+
+func forceLog(forceLogs ...bool) bool {
+	if len(forceLogs) == 0 {
+		return false
+	}
+
+	return forceLogs[0]
+}
+
+func Trace(ctx context.Context, args ...interface{}) func(...bool) {
+	return func(forceLogs ...bool) {
+		log(ctx, Get(ctx), forceLog(forceLogs...), logrus.TraceLevel, args...)
+	}
+}
+
+func Debug(ctx context.Context, args ...interface{}) func(...bool) {
+	return func(forceLogs ...bool) {
+		log(ctx, Get(ctx), forceLog(forceLogs...), logrus.DebugLevel, args...)
+	}
+}
+
+func Info(ctx context.Context, args ...interface{}) func(...bool) {
+	return func(forceLogs ...bool) {
+		log(ctx, Get(ctx), forceLog(forceLogs...), logrus.InfoLevel, args...)
+	}
+}
+
+func Warn(ctx context.Context, args ...interface{}) func(...bool) {
+	return func(forceLogs ...bool) {
+		log(ctx, Get(ctx), forceLog(forceLogs...), logrus.WarnLevel, args...)
+	}
+}
+
+func Warning(ctx context.Context, args ...interface{}) func(...bool) {
+	return Warn(ctx, args...)
+}
+
+func Error(ctx context.Context, args ...interface{}) func() {
+	return func() {
+		log(ctx, Get(ctx), true, logrus.ErrorLevel, args...)
+	}
+}
+
+func Fatal(ctx context.Context, args ...interface{}) func() {
+	return func() {
+		log(ctx, Get(ctx), true, logrus.FatalLevel, args...)
+	}
+}
+
+func Panic(ctx context.Context, args ...interface{}) func() {
+	return func() {
+		log(ctx, Get(ctx), true, logrus.PanicLevel, args...)
+	}
 }
