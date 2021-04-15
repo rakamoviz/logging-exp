@@ -27,7 +27,7 @@ var (
 	//
 	// We may want to define this locally to a package to get package tagged log
 	// messages.
-	G = GetLogger
+	G = Get
 
 	// L is an alias for the standard logger.
 	L = logrus.NewEntry(logrus.StandardLogger())
@@ -51,13 +51,13 @@ const (
 
 // WithLogger returns a new context with the provided logger. Use in
 // combination with logger.WithField(s) for great effect.
-func WithLogger(ctx context.Context, logger *logrus.Entry) context.Context {
+func BuildContext(ctx context.Context, logger *logrus.Entry) context.Context {
 	return context.WithValue(ctx, loggerKey{}, logger)
 }
 
 // GetLogger retrieves the current logger from the context. If no logger is
 // available, the default logger is returned.
-func GetLogger(ctx context.Context) *logrus.Entry {
+func Get(ctx context.Context) *logrus.Entry {
 	logger := ctx.Value(loggerKey{})
 
 	if logger == nil {
@@ -67,19 +67,19 @@ func GetLogger(ctx context.Context) *logrus.Entry {
 	return logger.(*logrus.Entry)
 }
 
-func Entry(ctx context.Context, functionName string, args *map[string]interface{}) string {
+func FnEntrance(ctx context.Context, functionName string, args *map[string]interface{}) string {
 	G(ctx).WithFields(logrus.Fields{
-		"fnCall": "entering",
-		"fnName": functionName,
-		"fnArgs": args,
+		"fnEntrance": 1,
+		"fnName":     functionName,
+		"fnArgs":     args,
 	}).Info()
 
 	return functionName
 }
 
-func Trace(ctx context.Context, functionName string) {
+func FnExit(ctx context.Context, functionName string) {
 	G(ctx).WithFields(logrus.Fields{
-		"fnCall": "exiting",
+		"fnExit": 1,
 		"fnName": functionName,
 	}).Info()
 }

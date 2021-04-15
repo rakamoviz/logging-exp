@@ -3,8 +3,8 @@ package engine
 import (
 	"context"
 
-	"github.com/rakamoviz/logging-exp/log"
-	"github.com/rakamoviz/logging-exp/util"
+	"github.com/rakamoviz/logging-exp/util/log"
+	"github.com/rakamoviz/logging-exp/util/runtimeflags"
 )
 
 type Calculator struct {
@@ -12,11 +12,11 @@ type Calculator struct {
 }
 
 func (c *Calculator) Calculate(ctx context.Context, amount int) int {
-	if util.GetRuntimeFlags(ctx).Trace() {
-		defer log.Trace(ctx, log.Entry(ctx, "engine.(*Calculator).Calculate", &map[string]interface{}{"amount": amount}))
+	if runtimeflags.Get(ctx).Trace() {
+		defer log.FnExit(ctx, log.FnEntrance(ctx, "engine.(*Calculator).Calculate", &map[string]interface{}{"amount": amount}))
 	}
 
-	log.G(ctx).Info("Logging in Calculate")
+	log.G(ctx).Info("Logging inside a code block in the Calculate method")
 	return c.offset + amount
 }
 

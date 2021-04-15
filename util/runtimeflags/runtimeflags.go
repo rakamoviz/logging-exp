@@ -1,7 +1,9 @@
-package util
+package runtimeflags
 
 import (
 	"context"
+
+	"github.com/rakamoviz/logging-exp/util/contextkeys"
 )
 
 type RuntimeFlags struct {
@@ -12,7 +14,7 @@ func (rf RuntimeFlags) Trace() bool {
 	return rf.trace
 }
 
-func NewRuntimeFlags(config map[string]string) *RuntimeFlags {
+func New(config map[string]string) *RuntimeFlags {
 	traceStr, ok := config["trace"]
 	trace := false
 	if ok {
@@ -26,10 +28,10 @@ func NewRuntimeFlags(config map[string]string) *RuntimeFlags {
 	}
 }
 
-func GetRuntimeFlags(ctx context.Context) *RuntimeFlags {
+func Get(ctx context.Context) *RuntimeFlags {
 	runtimeFlagsCopy := RuntimeFlags{}
 
-	runtimeFlags := ctx.Value(RuntimeFlagsKey{})
+	runtimeFlags := ctx.Value(contextkeys.RuntimeFlags{})
 	if runtimeFlags != nil {
 		runtimeFlagsCopy.trace = runtimeFlags.(RuntimeFlags).trace
 	}
@@ -37,10 +39,10 @@ func GetRuntimeFlags(ctx context.Context) *RuntimeFlags {
 	return &runtimeFlagsCopy
 }
 
-func WithRuntimeFlags(ctx context.Context, runtimeFlags *RuntimeFlags) context.Context {
+func BuildContext(ctx context.Context, runtimeFlags *RuntimeFlags) context.Context {
 	runtimeFlagsCopy := RuntimeFlags{}
 
 	runtimeFlagsCopy.trace = runtimeFlags.trace
 
-	return context.WithValue(ctx, RuntimeFlagsKey{}, runtimeFlagsCopy)
+	return context.WithValue(ctx, contextkeys.RuntimeFlags{}, runtimeFlagsCopy)
 }

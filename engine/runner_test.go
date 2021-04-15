@@ -2,7 +2,6 @@ package engine
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"testing"
 
@@ -12,7 +11,7 @@ import (
 	"github.com/sirupsen/logrus"
 
 	"github.com/sirupsen/logrus/hooks/test"
-	//"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/assert"
 )
 
 func buildExecutionContext(runtimeConfig map[string]string, logger *logrus.Logger) context.Context {
@@ -77,5 +76,5 @@ func TestRun(t *testing.T) {
 
 	runner.Run(executionContext)
 
-	fmt.Println("==============> MYLOG", len(hook.Entries), hook.Entries[0].Data)
+	assert.Equal(t, 9, len(hook.Entries))
 }

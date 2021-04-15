@@ -6,8 +6,9 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/rakamoviz/logging-exp/engine"
-	"github.com/rakamoviz/logging-exp/log"
-	"github.com/rakamoviz/logging-exp/util"
+	"github.com/rakamoviz/logging-exp/util/contextkeys"
+	"github.com/rakamoviz/logging-exp/util/log"
+	"github.com/rakamoviz/logging-exp/util/runtimeflags"
 	"github.com/sirupsen/logrus"
 )
 
@@ -18,17 +19,17 @@ func main() {
 	logger.SetOutput(os.Stdout)
 
 	executionId := uuid.New()
-	runtimeFlags := util.NewRuntimeFlags(map[string]string{
+	runtimeFlags := runtimeflags.New(map[string]string{
 		"trace": "true",
 	})
 
 	baseContext := context.Background()
 	baseContext = context.WithValue(
-		baseContext, util.ExecutionIdKey{}, executionId,
+		baseContext, contextkeys.ExecutionId{}, executionId,
 	)
-	baseContext = util.WithRuntimeFlags(baseContext, runtimeFlags)
+	baseContext = runtimeflags.BuildContext(baseContext, runtimeFlags)
 
-	executionContext := log.WithLogger(
+	executionContext := log.BuildContext(
 		baseContext,
 		logger.WithFields(logrus.Fields{"executionId": executionId}),
 	)

@@ -3,8 +3,8 @@ package engine
 import (
 	"context"
 
-	"github.com/rakamoviz/logging-exp/log"
-	"github.com/rakamoviz/logging-exp/util"
+	"github.com/rakamoviz/logging-exp/util/log"
+	"github.com/rakamoviz/logging-exp/util/runtimeflags"
 )
 
 type Evaluator struct {
@@ -12,11 +12,11 @@ type Evaluator struct {
 }
 
 func (e *Evaluator) Evaluate(ctx context.Context, rule string) bool {
-	if util.GetRuntimeFlags(ctx).Trace() {
-		defer log.Trace(ctx, log.Entry(ctx, "engine.(*Evaluator).Evaluate", &map[string]interface{}{"rule": rule}))
+	if runtimeflags.Get(ctx).Trace() {
+		defer log.FnExit(ctx, log.FnEntrance(ctx, "engine.(*Evaluator).Evaluate", &map[string]interface{}{"rule": rule}))
 	}
 
-	log.G(ctx).Info("Logging in Evaluate")
+	log.G(ctx).Info("Logging inside a code block in the Evaluate method")
 
 	e.calculator.Calculate(ctx, 6)
 	return true

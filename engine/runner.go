@@ -2,10 +2,9 @@ package engine
 
 import (
 	"context"
-	"fmt"
 
-	"github.com/rakamoviz/logging-exp/log"
-	"github.com/rakamoviz/logging-exp/util"
+	"github.com/rakamoviz/logging-exp/util/log"
+	"github.com/rakamoviz/logging-exp/util/runtimeflags"
 )
 
 type Runner struct {
@@ -13,12 +12,11 @@ type Runner struct {
 }
 
 func (r *Runner) Run(ctx context.Context) {
-	fmt.Println(util.GetRuntimeFlags(ctx))
-	if util.GetRuntimeFlags(ctx).Trace() {
-		defer log.Trace(ctx, log.Entry(ctx, "engine.(*Runner).Run", nil))
+	if runtimeflags.Get(ctx).Trace() {
+		defer log.FnExit(ctx, log.FnEntrance(ctx, "engine.(*Runner).Run", nil))
 	}
 
-	log.G(ctx).Info("Logging in Run")
+	log.G(ctx).Info("Logging inside a code block in the Run method")
 
 	r.evaluator.Evaluate(ctx, "rule1")
 }
