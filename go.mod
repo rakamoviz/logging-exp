@@ -10,3 +10,5 @@ require (
 	github.com/sirupsen/logrus v1.8.1
 	github.com/stretchr/testify v1.5.1
 )
+
+replace github.com/rakamoviz/loghelpr v1.0.0 => github.com/rakamoviz/loghelpr v1.0.1-0.20210415235930-189fc1a36a85
