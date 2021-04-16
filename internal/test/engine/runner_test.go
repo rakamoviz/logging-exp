@@ -32,7 +32,7 @@ func buildExecutionContext(logger *logrus.Logger, sampleLog bool) context.Contex
 	)
 }
 
-func TestRun(t *testing.T) {
+func TestRunnerRun(t *testing.T) {
 	logger, hook := test.NewNullLogger()
 
 	executionContext := buildExecutionContext(logger, true)

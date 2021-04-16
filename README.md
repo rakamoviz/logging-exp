@@ -1,0 +1,1 @@
+go test -v $(pwd)/internal/benchmark -cpu 1,2,4,8 -benchmem -run=^$ -benchtime=1x -bench . logging_test.go

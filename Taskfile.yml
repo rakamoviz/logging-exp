@@ -1,0 +1,29 @@
+# https://taskfile.dev
+
+version: '3'
+
+vars:
+  GREETING: Hello, World!
+
+tasks:
+  build:
+    cmds:
+      - go build -o logging-exp ./cmd/logging-exp
+      - go clean -testcache
+      - go test -v ./internal/test/... -run=^_$
+      - go test -v ./internal/benchmark/... -bench=^_$
+
+  bench-logging:
+    cmds:
+      - go clean -testcache
+      - go test -v ./internal/benchmark/... -benchmem -bench=^BenchmarkRunWithLogging$ -benchtime=1x
+      
+  bench-nologging:
+    cmds:
+      - go clean -testcache
+      - go test -v ./internal/benchmark/... -benchmem -bench=^BenchmarkRunWithoutLogging$ -benchtime=1x
+      
+  test:
+    cmds:
+      - go clean -testcache
+      - go test -v ./internal/test/... -run=^TestRunnerRun$
