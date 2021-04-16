@@ -17,7 +17,7 @@ func (e *Evaluator) Evaluate(ctx context.Context, rule string) bool {
 		&map[string]interface{}{"rule": rule},
 	)())()
 
-	log.Info(ctx, "Logging inside a code block in the Evaluate method")()
+	//log.Info(ctx, "Logging inside a code block in the Evaluate method")()
 
 	e.calculator.Calculate(ctx, 6)
 	return true

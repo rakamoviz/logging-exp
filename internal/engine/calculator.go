@@ -17,7 +17,7 @@ func (c *Calculator) Calculate(ctx context.Context, amount int) int {
 		&map[string]interface{}{"amount": amount},
 	)())()
 
-	log.Info(ctx, "Logging inside a code block in the Calculate method")()
+	//log.Info(ctx, "Logging inside a code block in the Calculate method")()
 	return c.offset + amount
 }
 

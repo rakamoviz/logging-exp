@@ -17,7 +17,7 @@ func (r *Runner) Run(ctx context.Context) {
 		nil,
 	)())()
 
-	log.Info(ctx, "Logging inside a code block in the Run method")()
+	//log.Info(ctx, "Logging inside a code block in the Run method")()
 
 	r.evaluator.Evaluate(ctx, "rule1")
 }

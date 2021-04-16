@@ -55,3 +55,25 @@ func BenchmarkRunWithoutLogging(b *testing.B) {
 		runner.Run(executionContext)
 	}
 }
+
+func BenchmarkCalculateWithLogging(b *testing.B) {
+	executionContext := buildExecutionContext(logrus.New(), true)
+
+	calculator := engine.NewCalculator(4)
+
+	// run the Run function b.N times
+	for n := 0; n < b.N; n++ {
+		calculator.Calculate(executionContext, 2)
+	}
+}
+
+func BenchmarkCalculateWithoutLogging(b *testing.B) {
+	executionContext := buildExecutionContext(logrus.New(), false)
+
+	calculator := engine.NewCalculator(4)
+
+	// run the Run function b.N times
+	for n := 0; n < b.N; n++ {
+		calculator.Calculate(executionContext, 2)
+	}
+}

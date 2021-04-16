@@ -16,12 +16,14 @@ tasks:
   bench-logging:
     cmds:
       - go clean -testcache
-      - go test -v ./internal/benchmark/... -benchmem -bench=^BenchmarkRunWithLogging$ -benchtime=1x
+      - go test -v ./internal/benchmark/... -benchmem -bench=^BenchmarkCalculateWithLogging$ -cpuprofile prof_logging.out
+      - go tool pprof -http=":9080" logging-exp prof_logging.out
       
   bench-nologging:
     cmds:
       - go clean -testcache
-      - go test -v ./internal/benchmark/... -benchmem -bench=^BenchmarkRunWithoutLogging$ -benchtime=1x
+      - go test -v ./internal/benchmark/... -benchmem -bench=^BenchmarkCalculateWithoutLogging$ -cpuprofile prof_nologging.out
+      - go tool pprof -http=":9081" logging-exp prof_nologging.out
       
   test:
     cmds:
