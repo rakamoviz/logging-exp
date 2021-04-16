@@ -11,11 +11,11 @@ type Evaluator struct {
 }
 
 func (e *Evaluator) Evaluate(ctx context.Context, rule string) bool {
-	defer log.LogFn(log.Fn(
+	defer log.Fn(
 		ctx,
 		"engine.(*Evaluator).Evaluate",
 		&map[string]interface{}{"rule": rule},
-	)())()
+	)()
 
 	//log.Info(ctx, "Logging inside a code block in the Evaluate method")()
 

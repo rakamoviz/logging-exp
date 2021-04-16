@@ -11,11 +11,11 @@ type Runner struct {
 }
 
 func (r *Runner) Run(ctx context.Context) {
-	defer log.LogFn(log.Fn(
+	defer log.Fn(
 		ctx,
 		"engine.(*Runner).Run",
 		nil,
-	)())()
+	)()
 
 	//log.Info(ctx, "Logging inside a code block in the Run method")()
 
