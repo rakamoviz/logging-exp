@@ -42,6 +42,8 @@ github.com/rakamoviz/loghelpr v1.0.1-0.20210415235930-189fc1a36a85 h1:z5veLOUHxN
 github.com/rakamoviz/loghelpr v1.0.1-0.20210415235930-189fc1a36a85/go.mod h1:CrS1zCVzFAOmqmnG8/KoedW9wuIJedpn7lHPxXR1mjs=
 github.com/rakamoviz/loghelpr v1.1.0 h1:CdJXU0btv/gp23l6EOvFSmj3bD5aJSde5bKOZo99h+M=
 github.com/rakamoviz/loghelpr v1.1.0/go.mod h1:CrS1zCVzFAOmqmnG8/KoedW9wuIJedpn7lHPxXR1mjs=
+github.com/rakamoviz/loghelpr v1.1.1 h1:FHnzHfivWvj+jl7Zn7G5/uubwbPruY03r2NkakmMntQ=
+github.com/rakamoviz/loghelpr v1.1.1/go.mod h1:CrS1zCVzFAOmqmnG8/KoedW9wuIJedpn7lHPxXR1mjs=
 github.com/rogpeppe/go-internal v1.6.2/go.mod h1:xXDCJY+GAPziupqXw64V24skbSoqbTEfhy4qGm1nDQc=
 github.com/sergi/go-diff v1.0.0/go.mod h1:0CfEIISq7TuYL3j771MWULgwwjU+GofnZX9QAmXWZgo=
 github.com/sirupsen/logrus v1.8.1 h1:dJKuHgqk1NNQlqoA6BTlM1Wf9DOH3NBjQyu0h9+AZZE=
